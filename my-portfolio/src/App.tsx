@@ -15,7 +15,7 @@ const App: React.FC = () =>{
           top: 0,
           zIndex: 1000,
           backgroundColor: 'white', // or #f9f9f9 etc.
-          padding: '1rem 0',
+          padding: '0 0',
           textAlign: 'center',
           borderBottom: '1px solid #eee',
         }}
@@ -26,7 +26,8 @@ const App: React.FC = () =>{
         textAlign:"center",
         fontWeight:"bold",
         fontFamily:  "'Great Vibes', cursive",
-        margin: '0.5rem 0 1.25rem 0',
+        margin: '0 0 1.25rem 0',
+        padding: '10 0'
       }}
       >Arnold's Portfolio</h1>
       <Navbar/>

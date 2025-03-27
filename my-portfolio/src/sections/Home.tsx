@@ -35,13 +35,12 @@ const Home: React.FC = () => {
                 opacity: 1,
                 y: 0,
                 scale: 1,
-                duration: 2.5,
+                duration: 3.5,
                 ease: 'power4.out',
                 scrollTrigger: {
                     trigger: sectionRef.current,
                     start: 'top center-=100', 
                     toggleActions: 'restart none restart none',
-                    scrub:true,
                 }
             }
         );
@@ -70,7 +69,7 @@ const Home: React.FC = () => {
             >
                 <img 
                     ref={arrowRef as React.RefObject<HTMLImageElement>} 
-                    src="/src/assets/arrow.jpg" 
+                    src="/src/assets/blackArrow.png" 
                     alt="Scroll down arrow"
                     style={{
                         width: '150px', // 
