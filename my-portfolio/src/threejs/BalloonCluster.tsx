@@ -1,6 +1,8 @@
 import React, { useRef, useMemo, useEffect, useState } from 'react';
 import { useThree, useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
+import { TubeGeometry, Vector3, CatmullRomCurve3 } from 'three';
+
 
 type BalloonData = {
   position: THREE.Vector3;
@@ -15,12 +17,12 @@ const BalloonCluster: React.FC<{
   isScattered: boolean;
 }> = ({ onInteract, isScattered }) => {
   const groupRef = useRef<THREE.Group>(null);
+  const stringRefs = useRef<(THREE.Group | null)[]>([]); 
   const mouseRef = useRef(new THREE.Vector2());
   const { camera, raycaster, size } = useThree();
   const [isInteracting, setIsInteracting] = useState(false);
   const [mouseWorldPosition, setMouseWorldPosition] = useState<THREE.Vector3 | null>(null);
 
-  // Track mouse position manually
   useEffect(() => {
     const handlePointerMove = (event: PointerEvent) => {
       const x = (event.clientX / size.width) * 2 - 1;
@@ -40,7 +42,6 @@ const BalloonCluster: React.FC<{
     return () => window.removeEventListener('pointermove', handlePointerMove);
   }, [camera, raycaster, size]);
 
-  // Generate balloons
   const balloons = useMemo<BalloonData[]>(() => {
     const colors = ['#f87171', '#60a5fa', '#facc15', '#34d399', '#c084fc'];
     return Array.from({ length: 20 }).map(() => {
@@ -65,11 +66,10 @@ const BalloonCluster: React.FC<{
 
   useFrame(({ clock }) => {
     const t = clock.getElapsedTime();
-    const SPEED = 0.05; // 🎯 Control how fast balloons move (lower = slower)
+    const SPEED = 0.015;
 
     balloons.forEach((b, i) => {
       if (isScattered) {
-        // Set initial random direction only once
         if (b.velocity.length() === 0) {
           b.velocity.set(
             (Math.random() - 0.5),
@@ -78,12 +78,9 @@ const BalloonCluster: React.FC<{
           ).normalize().multiplyScalar(SPEED);
         }
 
-        // Move balloon
         b.position.add(b.velocity);
 
-        // Bounce off boundaries
         const bounds = { x: 6, y: 4, z: 4 };
-
         if (b.position.x < -bounds.x || b.position.x > bounds.x) {
           b.velocity.x *= -1;
           b.position.x = THREE.MathUtils.clamp(b.position.x, -bounds.x, bounds.x);
@@ -97,10 +94,8 @@ const BalloonCluster: React.FC<{
           b.position.z = THREE.MathUtils.clamp(b.position.z, -bounds.z, bounds.z);
         }
 
-        // Ensure constant speed
         b.velocity.setLength(SPEED);
       } else {
-        // Pre-scatter: gentle floating + repelling from mouse
         if (mouseWorldPosition) {
           const dist = b.position.distanceTo(mouseWorldPosition);
           if (dist < 2) {
@@ -113,12 +108,22 @@ const BalloonCluster: React.FC<{
         }
 
         b.position.y += Math.sin(t + i) * 0.002;
-        b.velocity.multiplyScalar(0.95); // soft damping
+        b.velocity.multiplyScalar(0.95);
         b.position.add(b.velocity);
+      }
+
+      // 🎯 String lean logic
+      const stringGroup = stringRefs.current[i];
+      if (stringGroup) {
+        const maxAngle = 0.4;
+        const leanX = THREE.MathUtils.clamp(-b.velocity.y * 20, -maxAngle, maxAngle);
+        const leanZ = THREE.MathUtils.clamp(b.velocity.x * 20, -maxAngle, maxAngle);
+
+        stringGroup.rotation.x = THREE.MathUtils.lerp(stringGroup.rotation.x, leanX, 0.1);
+        stringGroup.rotation.z = THREE.MathUtils.lerp(stringGroup.rotation.z, leanZ, 0.1);
       }
     });
 
-    // Trigger scatter when mouse gets close
     if (mouseWorldPosition && !isScattered && !isInteracting) {
       const shouldTrigger = balloons.some(
         (b) => b.position.distanceTo(mouseWorldPosition) < 2
@@ -129,7 +134,6 @@ const BalloonCluster: React.FC<{
       }
     }
 
-    // Sync balloon positions
     if (groupRef.current) {
       groupRef.current.children.forEach((mesh, i) => {
         mesh.position.copy(balloons[i].position);
@@ -161,14 +165,22 @@ const BalloonCluster: React.FC<{
             />
           </mesh>
 
-          <mesh position={[0, -0.65, 0]}>
-            <cylinderGeometry args={[0.005, 0.005, 0.6, 8]} />
-            <meshStandardMaterial
-              color="#222"
-              transparent
-              opacity={1}
-            />
-          </mesh>
+          <mesh>
+  <tubeGeometry
+    args={[
+      new CatmullRomCurve3([
+        new Vector3(0, -0.3, 0),   
+        new Vector3(0.05 * Math.sin(i), -0.5, 0.05 * Math.cos(i)), 
+        new Vector3(0, -0.9, 0)                  
+      ]),
+      20,  
+      0.005, 
+      8,    
+      false 
+    ]}
+  />
+  <meshStandardMaterial color="#222" />
+</mesh>
         </group>
       ))}
     </group>
@@ -176,4 +188,5 @@ const BalloonCluster: React.FC<{
 };
 
 export default BalloonCluster;
+
 

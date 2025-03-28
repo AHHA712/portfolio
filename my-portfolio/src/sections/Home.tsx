@@ -9,7 +9,7 @@ import Blackhole from '../threejs/BlackHole';
 const sentences = [
   "Welcome! This is Arnold's portfolio.",
   "I'm a passionate developer & designer.",
-  "Feel free to explore my projects and skills.",
+  "Feel free to explore around.",
 ];
 
 // Custom Blackhole Zoom Transition Component
