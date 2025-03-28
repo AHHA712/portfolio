@@ -2,7 +2,7 @@ const Info: React.FC = () => {
     return (
       <section className="max-w-4xl mx-auto px-6 py-12 text-left text-gray-800">
         <h2 className="text-2xl font-bold uppercase tracking-wide mb-2">
-          Activities & Skills
+          More Info
         </h2>
         <hr className="border-t border-gray-400 mb-6" />
   

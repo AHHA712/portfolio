@@ -46,9 +46,9 @@ const BalloonCluster: React.FC<{
     const colors = ['#f87171', '#60a5fa', '#facc15', '#34d399', '#c084fc'];
     return Array.from({ length: 20 }).map(() => {
       const angle = Math.random() * Math.PI * 2;
-      const radius = Math.random() * 1.5;
+      const radius = 0.5 + Math.random()*0.5;
       const x = Math.cos(angle) * radius;
-      const y = Math.random() * 1.5 - 0.75;
+      const y = Math.random() * 1.9 - 0.7;
       const z = Math.sin(angle) * radius;
 
       const position = new THREE.Vector3(x, y, z);
@@ -98,7 +98,7 @@ const BalloonCluster: React.FC<{
       } else {
         if (mouseWorldPosition) {
           const dist = b.position.distanceTo(mouseWorldPosition);
-          if (dist < 2) {
+          if (dist < 0.8) {
             const force = b.position.clone()
               .sub(mouseWorldPosition)
               .normalize()
@@ -126,7 +126,7 @@ const BalloonCluster: React.FC<{
 
     if (mouseWorldPosition && !isScattered && !isInteracting) {
       const shouldTrigger = balloons.some(
-        (b) => b.position.distanceTo(mouseWorldPosition) < 2
+        (b) => b.position.distanceTo(mouseWorldPosition) < 0.8
       );
       if (shouldTrigger) {
         setIsInteracting(true);
@@ -145,7 +145,7 @@ const BalloonCluster: React.FC<{
     <group ref={groupRef}>
       {balloons.map((b, i) => (
         <group key={i}>
-          <mesh scale={[1, 1.3, 1]}>
+          <mesh scale={[1.4, 1.8, 1.4]}>
             <sphereGeometry args={[0.3, 32, 32]} />
             <meshStandardMaterial
               color={b.color}
@@ -153,6 +153,8 @@ const BalloonCluster: React.FC<{
               metalness={0.2}
               transparent
               opacity={1}
+              depthWrite={false}
+              depthTest={true}
             />
           </mesh>
 
@@ -169,9 +171,9 @@ const BalloonCluster: React.FC<{
   <tubeGeometry
     args={[
       new CatmullRomCurve3([
-        new Vector3(0, -0.3, 0),   
-        new Vector3(0.05 * Math.sin(i), -0.5, 0.05 * Math.cos(i)), 
-        new Vector3(0, -0.9, 0)                  
+        new Vector3(0, -0.35, 0),   
+        new Vector3(0.05 * Math.sin(i), -0.6, 0.06 * Math.cos(i)), 
+        new Vector3(0, -1.05, 0)                  
       ]),
       20,  
       0.005, 
