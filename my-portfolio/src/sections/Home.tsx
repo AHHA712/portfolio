@@ -13,7 +13,13 @@ const sentences = [
 ];
 
 // Custom Blackhole Zoom Transition Component
-const BlackholeZoomTransition = ({ entered, onTransitionComplete }) => {
+const BlackholeZoomTransition = ({
+  entered,
+  onTransitionComplete,
+}: {
+  entered: boolean;
+  onTransitionComplete: () => void;
+}) => {
   const { camera } = useThree();
   const [transitionProgress, setTransitionProgress] = useState(0);
 
@@ -35,7 +41,10 @@ const BlackholeZoomTransition = ({ entered, onTransitionComplete }) => {
 };
 
 // Custom Universe Transition Component
-const UniverseTransition = ({ entered, onTransitionComplete }) => {
+const UniverseTransition = ({ entered, onTransitionComplete }:{
+  entered:boolean;
+  onTransitionComplete:()=>void;
+}) => {
   const { camera } = useThree();
   const [transitionProgress, setTransitionProgress] = useState(0);
 
@@ -58,7 +67,7 @@ const UniverseTransition = ({ entered, onTransitionComplete }) => {
 };
 
 const Home: React.FC = () => {
-  const [balloonsVisible, setBalloonsVisible] = useState(true);
+  //const [balloonsVisible, setBalloonsVisible] = useState(true);
   const [currentSentence, setCurrentSentence] = useState(0);
   const [isScattered, setIsScattered] = useState(false);
   const [showBlackhole, setShowBlackhole] = useState(false);
@@ -107,8 +116,7 @@ const Home: React.FC = () => {
   const handleBlackholeClick = () => {
     setEnteredPortal(true);
     setZoomToBlackhole(true);
-    setBalloonsVisible(false);
-    // Fade out balloons and blackhole
+    //setBalloonsVisible(false);
     setTimeout(() => setPortalVisible(false), 500);
   };
 

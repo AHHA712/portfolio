@@ -1,7 +1,7 @@
 import React, { useRef, useMemo, useEffect, useState } from 'react';
 import { useThree, useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
-import { TubeGeometry, Vector3, CatmullRomCurve3 } from 'three';
+import { Vector3, CatmullRomCurve3 } from 'three';
 
 
 type BalloonData = {
@@ -13,6 +13,7 @@ type BalloonData = {
 };
 
 const BalloonCluster: React.FC<{
+  className?: string;
   onInteract: () => void;
   isScattered: boolean;
 }> = ({ onInteract, isScattered }) => {
